@@ -8,15 +8,27 @@ nixPkgs = [
     "chromium",
     "nss",
     "freetype",
-    "freetype.dev",
+    "freetype-dev",
     "expat",
-    "xorg.libxcb"
+    "xorg.libxcb",
+    "gtk3",
+    "gdk-pixbuf",
+    "pango",
+    "cairo",
+    "at-spi2-atk",
+    "at-spi2-core",
+    "dbus",
+    "glib",
+    "alsa-lib",
+    "libxkbcommon",
+    "mesa"
 ]
 
 [phases.install]
 cmds = [
     "python -m venv /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt",
-    "playwright install chromium"
+    "playwright install chromium",
+    "python -m camoufox install"
 ]
 
 [phases.build]
