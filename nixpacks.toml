@@ -1,0 +1,26 @@
+# Nixpacks Configuration for Railway
+# Ensures Python and Browser dependencies are installed
+
+[phases.setup]
+nixPkgs = [
+    "python39",
+    "ffmpeg",
+    "chromium",
+    "nss",
+    "freetype",
+    "freetype.dev",
+    "expat",
+    "xorg.libxcb"
+]
+
+[phases.install]
+cmds = [
+    "python -m venv /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt",
+    "playwright install chromium"
+]
+
+[phases.build]
+cmds = ["echo 'Building...'"]
+
+[start]
+cmd = "gunicorn api.index:app --timeout 600 --log-level debug"
