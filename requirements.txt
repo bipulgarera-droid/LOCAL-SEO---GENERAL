@@ -15,3 +15,6 @@ gunicorn
 
 rapidfuzz
 markdown
+camoufox
+google-genai
+playwright
