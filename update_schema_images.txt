@@ -1,0 +1,7 @@
+-- Add columns for AI Blog Images
+ALTER TABLE pages ADD COLUMN IF NOT EXISTS image_prompt TEXT;
+ALTER TABLE pages ADD COLUMN IF NOT EXISTS main_image_url TEXT;
+
+-- Optional: Add a comment
+COMMENT ON COLUMN pages.image_prompt IS 'The prompt used to generate the main image';
+COMMENT ON COLUMN pages.main_image_url IS 'The URL of the generated main image';

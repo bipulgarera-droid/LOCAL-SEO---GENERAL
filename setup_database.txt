@@ -1,0 +1,82 @@
+-- Enable necessary extensions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "vector";
+-- 1. Projects Table
+CREATE TABLE IF NOT EXISTS projects (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    project_name TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    user_id UUID -- Optional, for future auth
+);
+-- 2. Profiles Table (ICP / Business Context)
+CREATE TABLE IF NOT EXISTS business_profiles (
+    id UUID PRIMARY KEY REFERENCES projects(id) ON DELETE CASCADE,
+    project_id UUID REFERENCES projects(id) ON DELETE CASCADE, -- Redundant but sometimes useful, or just use id as FK
+    business_summary TEXT, -- The "Strategy Plan" or "Business Context"
+    target_audience TEXT,
+    ideal_customer_profile TEXT, -- Detailed ICP
+    brand_voice TEXT,
+    competitors JSONB, -- List of competitors
+    primary_products JSONB, -- List of primary products
+    unique_selling_points TEXT[], -- Array of USPs
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+-- 3. Pages Table (The Core "Brain")
+CREATE TABLE IF NOT EXISTS pages (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+    url TEXT NOT NULL,
+    page_type TEXT, -- 'Landing Page', 'Blog Post', 'Topic', 'Silo'
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    -- Tech Audit Data
+    tech_audit_data JSONB, -- Stores PageSpeed, Meta tags, Status codes
+    
+    -- Content Audit Data
+    content_audit_data JSONB, -- Stores Word count, Readability, etc.
+    
+    -- Approval Workflow
+    approval_status BOOLEAN DEFAULT FALSE,
+    
+    -- Content Strategy & Funnel
+    funnel_stage TEXT, -- 'MoFu', 'ToFu', etc.
+    source_page_id UUID, -- Self-reference for Parent Page (e.g., ToFu -> MoFu)
+    content_description TEXT, -- Intent/Brief
+    keywords TEXT, -- Target keywords
+    product_action TEXT, -- Status of product generation
+    
+    -- Research & Generation
+    research_data JSONB, -- Stores Perplexity/Gemini research
+    content TEXT, -- The generated article/copy
+    slug TEXT -- URL slug for the page
+);
+-- 4. Content Briefs Table
+CREATE TABLE IF NOT EXISTS content_briefs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    page_id UUID REFERENCES pages(id) ON DELETE CASCADE,
+    brief_data JSONB, -- Structured brief (headings, tone, etc.)
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+-- 5. Photoshoots Table (New for Image Gen)
+CREATE TABLE IF NOT EXISTS photoshoots (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+    name TEXT,
+    status TEXT DEFAULT 'pending', -- 'pending', 'processing', 'completed', 'failed'
+    input_image_url TEXT,
+    output_image_url TEXT,
+    prompt TEXT,
+    aspect_ratio TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+-- 6. Storage Bucket for Photoshoots
+-- Note: This usually requires running in the Supabase SQL Editor as it interacts with the storage schema
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('photoshoots', 'photoshoots', true)
+ON CONFLICT (id) DO NOTHING;
+-- Storage Policies (Allow public access for now)
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = 'photoshoots');
+CREATE POLICY "Public Insert" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'photoshoots');
+CREATE POLICY "Public Update" ON storage.objects FOR UPDATE USING (bucket_id = 'photoshoots');
+CREATE POLICY "Public Delete" ON storage.objects FOR DELETE USING (bucket_id = 'photoshoots');

@@ -1,0 +1,6 @@
+-- Add aspect_ratio column to photoshoots table
+ALTER TABLE photoshoots 
+ADD COLUMN IF NOT EXISTS aspect_ratio TEXT DEFAULT '16:9';
+
+-- Comment on column
+COMMENT ON COLUMN photoshoots.aspect_ratio IS 'Target aspect ratio for image generation (e.g., 16:9, 1:1, 9:16)';

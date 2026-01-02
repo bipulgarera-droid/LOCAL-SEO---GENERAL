@@ -1,0 +1,141 @@
+{
+  "already_existed": 0,
+  "audit_id": "736b9472",
+  "directories": [
+    {
+      "category": "general",
+      "name": "Yelp",
+      "url": "https://yelp.com"
+    },
+    {
+      "category": "general",
+      "name": "Yellow Pages",
+      "url": "https://yellowpages.com"
+    },
+    {
+      "category": "general",
+      "name": "Bing Places",
+      "url": "https://bing.com"
+    },
+    {
+      "category": "general",
+      "name": "Apple Maps Connect",
+      "url": "https://mapsconnect.apple.com"
+    },
+    {
+      "category": "general",
+      "name": "Foursquare",
+      "url": "https://foursquare.com"
+    },
+    {
+      "category": "general",
+      "name": "MapQuest",
+      "url": "https://mapquest.com"
+    },
+    {
+      "category": "general",
+      "name": "Thumbtack",
+      "url": "https://thumbtack.com"
+    },
+    {
+      "category": "general",
+      "name": "Nextdoor Business",
+      "url": "https://nextdoor.com"
+    },
+    {
+      "category": "general",
+      "name": "Manta",
+      "url": "https://manta.com"
+    },
+    {
+      "category": "general",
+      "name": "Hotfrog",
+      "url": "https://hotfrog.com"
+    },
+    {
+      "category": "general",
+      "name": "Superpages",
+      "url": "https://superpages.com"
+    },
+    {
+      "category": "general",
+      "name": "ShowMeLocal",
+      "url": "https://showmelocal.com"
+    },
+    {
+      "category": "local",
+      "name": "Chamber of Commerce (US Business Directory)",
+      "url": "https://chamberofcommerce.com"
+    },
+    {
+      "category": "general",
+      "name": "Whitepages Business",
+      "url": "https://whitepages.com"
+    },
+    {
+      "category": "specialty",
+      "name": "Movers Regional Directory",
+      "url": "https://movers.regionaldirectory.us"
+    },
+    {
+      "category": "specialty",
+      "name": "USA Moving & Storage - Resources",
+      "url": "https://usamovingandstorage.com"
+    },
+    {
+      "category": "specialty",
+      "name": "MoveAdvisor",
+      "url": "https://moveadvisor.com"
+    },
+    {
+      "category": "specialty",
+      "name": "Moving Companies Directory (movingcompanies.directory)",
+      "url": "https://movingcompanies.directory"
+    },
+    {
+      "category": "specialty",
+      "name": "International Association of Movers (IAM)",
+      "url": "https://iamovers.org"
+    },
+    {
+      "category": "specialty",
+      "name": "United Van Lines / Agent Finder (industry listing)",
+      "url": "https://unitedvanlines.com"
+    },
+    {
+      "category": "specialty",
+      "name": "Atlas Van Lines / Find an Agent",
+      "url": "https://atlasvanlines.com"
+    },
+    {
+      "category": "specialty",
+      "name": "Two Men and a Truck - Find a Mover (franchise directory)",
+      "url": "https://twomenandatruck.com"
+    },
+    {
+      "category": "general",
+      "name": "HomeAdvisor",
+      "url": "https://homeadvisor.com"
+    },
+    {
+      "category": "general",
+      "name": "Porch",
+      "url": "https://porch.com"
+    },
+    {
+      "category": "local",
+      "name": "EZlocal",
+      "url": "https://ezlocal.com"
+    },
+    {
+      "category": "local",
+      "name": "LocalStack",
+      "url": "https://localstack.com"
+    }
+  ],
+  "directories_count": 26,
+  "message": "Added 26 new directories (skipped 0 existing)",
+  "project_id": "413d2499-f148-4996-88d8-1eac4fc39842",
+  "success": true,
+  "total_discovered": 26
+}

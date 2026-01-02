@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI SEO Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            background-color: #0f172a;
+            /* Slate 900 */
+            color: #e2e8f0;
+            /* Slate 200 */
+        }
+
+        .prose {
+            max-width: none;
+        }
+
+        .prose h1,
+        .prose h2,
+        .prose h3,
+        .prose h4 {
+            color: #f8fafc;
+            font-weight: 700;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        .prose p {
+            margin-bottom: 1em;
+            line-height: 1.7;
+        }
+
+        .prose ul {
+            list-style-type: disc;
+            padding-left: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        .prose strong {
+            color: #38bdf8;
+            /* Sky 400 */
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-3xl bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 p-8">
+
+        <div class="text-center mb-8">
+            <div class="inline-block p-3 rounded-full bg-indigo-500/10 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-400" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-white tracking-tight">AI SEO Agent</h1>
+            <p class="text-slate-400 mt-2">Enter a URL to generate a comprehensive SEO strategy.</p>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label for="urlInput" class="block text-sm font-medium text-slate-300 mb-1">Target Website</label>
+                <input type="url" id="urlInput" placeholder="https://example.com"
+                    class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                    required>
+            </div>
+
+            <button id="generateBtn" onclick="startAudit()"
+                class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
+                <span>Generate Audit</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+            </button>
+        </div>
+
+        <div id="statusContainer"
+            class="hidden mt-6 p-4 bg-slate-900/50 rounded-xl border border-slate-700/50 flex items-center gap-3">
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-400"></div>
+            <span id="statusText" class="text-slate-300 text-sm">Initializing...</span>
+        </div>
+
+        <div id="resultsContainer" class="hidden mt-8 pt-8 border-t border-slate-700">
+            <h2 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Audit Results
+            </h2>
+            <div id="markdownOutput" class="prose prose-invert text-slate-300">
+                <!-- Results will be injected here -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Project Crawler Card -->
+    <div class="w-full max-w-3xl bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 p-8 mt-8">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="p-2 rounded-lg bg-emerald-500/10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-400" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+            </div>
+            <h2 class="text-xl font-bold text-white">Project Crawler</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">Domain</label>
+                <input type="text" id="projectDomain" placeholder="nike.com"
+                    class="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">Client Name</label>
+                <input type="text" id="clientName" placeholder="Nike Inc."
+                    class="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+        </div>
+
+        <button onclick="createProject()" id="crawlBtn"
+            class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            Create & Crawl Sitemap
+        </button>
+
+        <div id="crawlStatus"
+            class="mt-4 hidden p-4 rounded-xl bg-slate-900/50 border border-slate-700 text-sm text-slate-300"></div>
+    </div>
+
+    <!-- Article Modal -->
+    <div id="articleModal"
+        class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div
+            class="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="p-6 border-b border-slate-700 flex justify-between items-center bg-slate-800/50 rounded-t-2xl">
+                <h3 class="text-xl font-bold text-white">Generated Article</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-8 overflow-y-auto prose prose-invert max-w-none" id="articleContent">
+                <!-- Article goes here -->
+            </div>
+            <div class="p-6 border-t border-slate-700 bg-slate-800/50 rounded-b-2xl flex justify-end gap-3">
+                <button onclick="copyArticle()"
+                    class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors">Copy
+                    Markdown</button>
+                <button onclick="closeModal()"
+                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function startAudit() {
+            const urlInput = document.getElementById('urlInput');
+            const btn = document.getElementById('generateBtn');
+            const statusContainer = document.getElementById('statusContainer');
+            const statusText = document.getElementById('statusText');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const markdownOutput = document.getElementById('markdownOutput');
+
+            const url = urlInput.value.trim();
+            if (!url) {
+                alert('Please enter a valid URL');
+                return;
+            }
+
+            // Reset UI
+            resultsContainer.classList.add('hidden');
+            statusContainer.classList.remove('hidden');
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            // Determine API Base URL
+            const isLocal = window.location.port === '8000';
+            const API_BASE = isLocal ? 'http://localhost:3000' : '';
+
+            try {
+                // Step 1: Start Audit
+                btn.innerHTML = 'Starting...';
+                statusText.textContent = 'Registering job with Supabase...';
+
+                const startRes = await fetch(`${API_BASE}/api/start-audit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+
+                if (!startRes.ok) throw new Error('Failed to start audit');
+                const startData = await startRes.json();
+                const jobId = startData.id;
+
+                // Step 2: Update Status
+                btn.innerHTML = 'Analyzing...';
+                statusText.textContent = 'Analyzing (this takes ~10s)...';
+
+                // Step 3: Process Job
+                const processRes = await fetch(`${API_BASE}/api/process-job`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({}) // In a real queue system, the worker would pick this up independently. Here we trigger it manually.
+                });
+
+                if (!processRes.ok) throw new Error('Analysis failed');
+                const processData = await processRes.json();
+
+                // Step 4: Display Results
+                statusContainer.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                markdownOutput.innerHTML = marked.parse(processData.result);
+                addWriteButtons();
+
+                btn.innerHTML = '<span>Generate Audit</span><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>';
+
+            } catch (error) {
+                console.error(error);
+                if (error.message.includes('Failed to fetch')) {
+                    alert('Backend not found! Make sure the black terminal window is running and says Ready on port 3000');
+                }
+                statusText.textContent = 'Error: ' + error.message;
+                statusText.classList.add('text-red-400');
+                btn.innerHTML = 'Try Again';
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        }
+
+        function addWriteButtons() {
+            const container = document.getElementById('markdownOutput');
+            const headers = container.querySelectorAll('h3');
+
+            headers.forEach(header => {
+                // Try to extract keywords from the following list if possible
+                let keywords = [];
+                let nextElem = header.nextElementSibling;
+                // Look ahead for a UL containing keywords
+                while (nextElem && nextElem.tagName !== 'H3') {
+                    if (nextElem.tagName === 'UL') {
+                        const items = nextElem.querySelectorAll('li');
+                        items.forEach(li => {
+                            if (li.textContent.includes('Keywords')) {
+                                // Extract text inside quotes or after colon
+                                const text = li.textContent.split(':')[1] || '';
+                                const matches = text.match(/"([^"]+)"/g);
+                                if (matches) {
+                                    keywords = matches.map(m => m.replace(/"/g, ''));
+                                } else {
+                                    keywords = text.split(',').map(k => k.trim());
+                                }
+                            }
+                        });
+                    }
+                    nextElem = nextElem.nextElementSibling;
+                }
+
+                const btn = document.createElement('button');
+                btn.className = 'ml-4 px-3 py-1 text-xs font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full hover:bg-indigo-500/30 transition-all inline-flex items-center gap-1 opacity-80 hover:opacity-100';
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg> Write This`;
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    writeArticle(header.innerText, keywords, btn);
+                };
+
+                header.classList.add('flex', 'items-center', 'flex-wrap');
+                header.appendChild(btn);
+            });
+        }
+
+        async function writeArticle(topicText, keywords, btn) {
+            const cleanTopic = topicText.replace(/^\d+\.\s*Topic:\s*|"/g, '').replace('Write This', '').trim();
+            const originalText = btn.innerHTML;
+
+            btn.innerHTML = `<svg class="animate-spin h-3 w-3 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Writing...`;
+            btn.disabled = true;
+
+            const isLocal = window.location.port === '8000';
+            const API_BASE = isLocal ? 'http://localhost:3000' : '';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/write-article`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic: cleanTopic, keywords: keywords })
+                });
+
+                if (!res.ok) throw new Error('Failed to generate article');
+                const data = await res.json();
+
+                // Show Modal
+                const modal = document.getElementById('articleModal');
+                const content = document.getElementById('articleContent');
+                content.innerHTML = marked.parse(data.content);
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+
+            } catch (error) {
+                alert('Error generating article: ' + error.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('articleModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function copyArticle() {
+            const content = document.getElementById('articleContent').innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('Article copied to clipboard!');
+            });
+        }
+
+        async function createProject() {
+            const domain = document.getElementById('projectDomain').value.trim();
+            const client = document.getElementById('clientName').value.trim();
+            const btn = document.getElementById('crawlBtn');
+            const status = document.getElementById('crawlStatus');
+
+            if (!domain) return alert('Domain is required');
+
+            btn.disabled = true;
+            btn.innerHTML = 'Crawling...';
+            status.classList.add('hidden');
+
+            const isLocal = window.location.port === '8000';
+            const API_BASE = isLocal ? 'http://localhost:3000' : '';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/create-project`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain, client })
+                });
+
+                const data = await res.json();
+
+                status.classList.remove('hidden');
+                if (res.ok) {
+                    status.innerHTML = `<span class="text-emerald-400 font-bold">Success!</span> Project created (ID: ${data.project_id}). Found ${data.pages_found} pages in sitemap.`;
+                } else {
+                    status.innerHTML = `<span class="text-red-400 font-bold">Error:</span> ${data.error}`;
+                }
+
+            } catch (e) {
+                status.classList.remove('hidden');
+                status.innerHTML = `<span class="text-red-400 font-bold">Error:</span> ${e.message}`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg> Create & Crawl Sitemap`;
+            }
+        }
+    </script>
+</body>
+
+</html>
+```

@@ -1,0 +1,327 @@
+<body>
+<a>
+      Skip to content
+    </a><!-- Failed to render section 'announcement-bar': section file 'sections/announcement-bar.liquid' does not support the 'product' template type -->
+<!-- BEGIN sections: header-group -->
+<div></div><div>
+
+
+
+<sticky-header><header>
+</header>
+</sticky-header>
+
+</div><div></div>
+<!-- END sections: header-group -->
+<main>
+<div>
+<div>
+<img>
+<img/>
+<div>The site is under construction. Kindly bear with us for a few hours.</div>
+</img></div>
+</div>
+
+<div>
+<div>
+<ul>
+<li>
+<a>
+            Home
+          </a>
+</li><li>
+<span>Mayakhel - Playing Cards</span>
+</li></ul>
+</div>
+</div>
+<section><product-info>
+</product-info>
+
+</section><div></div><section>
+
+</section><section>
+</section><section>
+</section><section>
+<div>
+<div>
+<h3>Additional Information</h3>
+<div>
+<div>
+<div><ul><li>Clean Aromatherapy</li><li>Handcrafted with Care </li><li>Safe &amp; Non-Toxic</li><li>Mindful Formulation</li><li>Sustainably Made</li><li>Empowering Women</li></ul></div>
+</div>
+<div>
+<div><p><strong>Country of Origin:</strong> India</p><p><strong>Manufactured &amp; Marketed by: <br/>
+</strong>Nytarra Naturals Pvt Ltd<br/>
+A-54, sector 57, Noida - 201301</p></div>
+</div>
+</div>
+</div>
+</div>
+
+
+</section><div></div><section></section><section><div>
+<h2>
+    The Art Of Intentional Living
+  </h2>
+<div>
+<a>
+<p>
+        Discover More Stories
+        <span>
+<img/>
+</span>
+</p>
+</a>
+</div>
+<div>
+<div>
+<div>
+<img/>
+<div>
+<h3>
+                How to Bring Positive Vibes Into 2026
+              </h3>
+<p>
+                How to Bring Positive Vibes Into 2026 When a new year approaches, there’s always a gentle shift — a feeling of possibility, a sense of “maybe this year will be...
+              </p>
+<div>
+<div>
+<a>
+                    Read More
+                    <span>
+<img/>
+</span>
+</a>
+</div>
+<div>
+<p>
+<time>November 2025</time>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<img/>
+<div>
+<h3>
+                5-Minute Salt Cleanse for Your Space &amp; Mind
+              </h3>
+<p>
+                5-Minute Salt Cleanse for Your Space &amp; Mind There are days when the energy around you feels heavy, your thoughts slow down, and even your room feels dull, that’s when...
+              </p>
+<div>
+<div>
+<a>
+                    Read More
+                    <span>
+<img/>
+</span>
+</a>
+</div>
+<div>
+<p>
+<time>November 2025</time>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<img/>
+<div>
+<h3>
+                The Morning Ritual Your Future Self Will Thank ...
+              </h3>
+<p>
+                The Morning Ritual Your Future Self Will Thank You For Mornings have a quiet kind of beauty.Before the world starts demanding your time and attention, there’s a small moment where...
+              </p>
+<div>
+<div>
+<a>
+                    Read More
+                    <span>
+<img/>
+</span>
+</a>
+</div>
+<div>
+<p>
+<time>November 2025</time>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<img/>
+<div>
+<h3>
+                Manifest Abundance and Positivity This Diwali
+              </h3>
+<p>
+                Diwali always looks the same, homes lit up with diyas, boxes of sweets being exchanged, laughter filling the air. But if you think about it, this festival has always stood...
+              </p>
+<div>
+<div>
+<a>
+                    Read More
+                    <span>
+<img/>
+</span>
+</a>
+</div>
+<div>
+<p>
+<time>October 2025</time>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<img/>
+<div>
+<h3>
+                The Ultimate Guide to Corporate Gifting This Di...
+              </h3>
+<p>
+                Diwali gifting can feel like a mini stress test. What do you give? Will they like it? Will it end up forgotten in a corner? And please, let’s collectively retire...
+              </p>
+<div>
+<div>
+<a>
+                    Read More
+                    <span>
+<img/>
+</span>
+</a>
+</div>
+<div>
+<p>
+<time>September 2025</time>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<img/>
+<div>
+<h3>
+                The Real Reasons Your Car Stinks
+              </h3>
+<p>
+                Ever stepped into your car and instantly regretted it?That mysterious, “what-is-that” smell can ruin the vibe of even the smoothest drive. Sometimes it’s a damp, musty hint, sometimes a leftover...
+              </p>
+<div>
+<div>
+<a>
+                    Read More
+                    <span>
+<img/>
+</span>
+</a>
+</div>
+<div>
+<p>
+<time>September 2025</time>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Navigation + Fraction -->
+<div>
+<div>
+<div>
+<img/>
+</div>
+<div></div>
+<div>
+<img/>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+</section>
+</main>
+<div>
+<div>
+<div>
+<a><img/></a>
+</div>
+<div>
+<a><img/></a>
+</div>
+<div>
+<a><img/></a>
+</div>
+</div>
+<img/>
+</div>
+
+<!-- BEGIN sections: footer-group -->
+<div>
+
+
+
+
+
+
+</div>
+<!-- END sections: footer-group -->
+<ul>
+<li>Choosing a selection results in a full page refresh.</li>
+<li>Opens in a new window.</li>
+</ul>
+
+<!-- All CDN -->
+
+
+
+
+
+
+
+<div>
+<div>
+<span>
+
+</span>
+<div>
+</div>
+</div>
+</div>
+
+<div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- BEGIN app snippet: entrypoint-components-develop -->
+
+
+<!-- END app snippet -->
+</div></body>

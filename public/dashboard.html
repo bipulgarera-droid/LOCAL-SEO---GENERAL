@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgencyOS - SEO Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .truncate-url {
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Markdown rendering styles for modals */
+        .prose h1 {
+            font-size: 2em;
+            font-weight: 700;
+            margin-top: 1.5em;
+            margin-bottom: 0.75em;
+            line-height: 1.2;
+            color: #f1f5f9;
+        }
+
+        .prose h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-top: 1.25em;
+            margin-bottom: 0.5em;
+            line-height: 1.3;
+            color: #e2e8f0;
+        }
+
+        .prose h3 {
+            font-size: 1.25em;
+            font-weight: 600;
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+            line-height: 1.4;
+            color: #cbd5e1;
+        }
+
+        .prose p {
+            margin-top: 0.75em;
+            margin-bottom: 0.75em;
+            line-height: 1.7;
+        }
+
+        .prose ul,
+        .prose ol {
+            margin-top: 0.75em;
+            margin-bottom: 0.75em;
+            padding-left: 1.5em;
+        }
+
+        .prose li {
+            margin-top: 0.25em;
+            margin-bottom: 0.25em;
+        }
+
+        .prose strong {
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .prose code {
+            background-color: #1e293b;
+            padding: 0.2em 0.4em;
+            border-radius: 0.25em;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <div class="grid grid-cols-[280px_1fr] h-screen">
+
+        <!-- Sidebar -->
+        <div class="bg-slate-900 border-r border-slate-700 flex flex-col">
+            <!-- Header -->
+            <div class="p-6 border-b border-slate-700">
+                <h1
+                    class="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+                    AgencyOS</h1>
+                <p class="text-xs text-slate-500 mt-1">SEO Command Center</p>
+            </div>
+
+            <!-- Projects List -->
+            <div class="flex-1 overflow-y-auto p-4">
+                <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Projects</h2>
+                <div id="projectsList" class="space-y-1">
+                    <div class="text-sm text-slate-500 italic">Loading...</div>
+                </div>
+            </div>
+
+            <!-- New Project Section -->
+            <div class="p-4 border-t border-slate-700 bg-slate-800/50">
+                <h3 class="text-xs font-semibold text-slate-400 uppercase mb-2">New Project</h3>
+                <input type="text" id="newDomain" placeholder="nike.com"
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <input type="text" id="newClient" placeholder="Client Name"
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button onclick="createNewProject()" id="createBtn"
+                    class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors">
+                    Create & Crawl
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="bg-slate-800 overflow-y-auto">
+            <div class="p-8">
+
+                <!-- Empty State -->
+                <div id="emptyState" class="flex items-center justify-center h-[calc(100vh-4rem)]">
+                    <div class="text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-slate-600 mx-auto mb-4"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <h3 class="text-xl font-semibold text-slate-400 mb-2">Select a Project</h3>
+                        <p class="text-slate-500 text-sm">Choose a project from the sidebar to view pages</p>
+                    </div>
+                </div>
+
+                <!-- Project View -->
+                <div id="projectView" class="hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white" id="projectTitle">Project Name</h2>
+                            <p class="text-sm text-slate-400 mt-1" id="projectMeta">0 pages discovered</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors">
+                                Export CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pages Table -->
+                    <div class="bg-slate-900 rounded-xl border border-slate-700 overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-slate-800/50 border-b border-slate-700">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                        URL</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                        Status</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                        Type</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                        Keywords</th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                        Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pagesTable" class="divide-y divide-slate-700">
+                                <!-- Rows will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Strategy Modal -->
+    <div id="strategyModal"
+        class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div
+            class="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="p-6 border-b border-slate-700 flex justify-between items-center bg-slate-800/50 rounded-t-2xl">
+                <h3 class="text-xl font-bold text-white">SEO Strategy & Content Ideas</h3>
+                <button onclick="closeStrategyModal()" class="text-slate-400 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-8 overflow-y-auto flex-1" id="strategyContent">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Article Modal -->
+    <div id="articleModal"
+        class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div
+            class="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="p-6 border-b border-slate-700 flex justify-between items-center bg-slate-800/50 rounded-t-2xl">
+                <h3 class="text-xl font-bold text-white">Generated Article</h3>
+                <button onclick="closeArticleModal()" class="text-slate-400 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-8 overflow-y-auto prose prose-invert max-w-none" id="articleContent">
+                <!-- Article goes here -->
+            </div>
+            <div class="p-6 border-t border-slate-700 bg-slate-800/50 rounded-b-2xl flex justify-end gap-3">
+                <button onclick="copyArticle()"
+                    class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors">Copy
+                    Markdown</button>
+                <button onclick="openWebflowModal()"
+                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors">Publish
+                    to Webflow</button>
+                <button onclick="closeArticleModal()"
+                    class="px-4 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-colors">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Webflow Modal -->
+    <div id="webflowModal"
+        class="fixed inset-0 bg-black/80 hidden items-center justify-center z-[60] p-4 backdrop-blur-sm">
+        <div class="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-md flex flex-col shadow-2xl">
+            <div class="p-6 border-b border-slate-700 flex justify-between items-center bg-slate-800/50 rounded-t-2xl">
+                <h3 class="text-xl font-bold text-white">Publish to Webflow</h3>
+                <button onclick="closeWebflowModal()" class="text-slate-400 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">API Key</label>
+                    <input type="password" id="wfApiKey"
+                        class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500"
+                        placeholder="Enter Webflow API Key">
+                    <button onclick="loadWebflowSites()" class="mt-2 text-xs text-indigo-400 hover:text-indigo-300">Load
+                        Sites</button>
+                </div>
+
+                <div id="wfSiteSection" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Select Site</label>
+                    <select id="wfSiteSelect" onchange="loadWebflowCollections()"
+                        class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500">
+                        <option value="">Select a site...</option>
+                    </select>
+                </div>
+
+                <div id="wfCollectionSection" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Select Collection</label>
+                    <select id="wfCollectionSelect"
+                        class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-indigo-500">
+                        <option value="">Select a collection...</option>
+                    </select>
+                </div>
+
+                <div id="wfMappingSection" class="hidden space-y-3 border-t border-slate-700 pt-3">
+                    <p class="text-xs text-slate-500">Field Mapping (Enter Webflow Field Slugs)</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] text-slate-400 uppercase">Title Field</label>
+                            <input type="text" id="wfMapTitle" value="name"
+                                class="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 uppercase">Slug Field</label>
+                            <input type="text" id="wfMapSlug" value="slug"
+                                class="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-[10px] text-slate-400 uppercase">Body/Content Field</label>
+                            <input type="text" id="wfMapContent" value="post-body"
+                                class="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-700 bg-slate-800/50 rounded-b-2xl flex justify-end gap-3">
+                <button onclick="closeWebflowModal()"
+                    class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors">Cancel</button>
+                <button onclick="publishToWebflow()" id="wfPublishBtn"
+                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Publish</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        let currentProjectId = null;
+        const API_BASE = ''; // Use relative path for same-origin API calls
+
+        // Load projects on page load
+        async function loadProjects() {
+            try {
+                const res = await fetch(`${API_BASE}/api/get-projects`);
+                const data = await res.json();
+
+                const container = document.getElementById('projectsList');
+                container.innerHTML = '';
+
+                if (data.projects && data.projects.length > 0) {
+                    data.projects.forEach(project => {
+                        const btn = document.createElement('button');
+                        btn.className = 'w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-800 transition-colors text-slate-300 hover:text-white';
+                        btn.innerHTML = `
+                            <div class="font-medium">${project.domain}</div>
+                            <div class="text-xs text-slate-500">${project.client_name || 'No client'}</div>
+                        `;
+                        btn.onclick = () => selectProject(project);
+                        container.appendChild(btn);
+                    });
+                } else {
+                    container.innerHTML = '<div class="text-sm text-slate-500 italic">No projects yet</div>';
+                }
+            } catch (e) {
+                console.error('Failed to load projects:', e);
+            }
+        }
+
+        async function selectProject(project) {
+            currentProjectId = project.id;
+
+            // Update UI
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('projectView').classList.remove('hidden');
+            document.getElementById('projectTitle').textContent = project.domain;
+
+            // Load pages
+            try {
+                const res = await fetch(`${API_BASE}/api/get-pages?project_id=${project.id}`);
+                const data = await res.json();
+
+                const tbody = document.getElementById('pagesTable');
+                tbody.innerHTML = '';
+
+                document.getElementById('projectMeta').textContent = `${data.pages.length} pages discovered`;
+
+                if (data.pages && data.pages.length > 0) {
+                    data.pages.forEach(page => {
+                        const row = createPageRow(page);
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">No pages found</td></tr>';
+                }
+            } catch (e) {
+                console.error('Failed to load pages:', e);
+            }
+        }
+
+        function createPageRow(page) {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-slate-800/50 transition-colors';
+            row.id = `page-row-${page.id}`;
+
+            // Store page data globally for modal access
+            if (!window.pageDataCache) window.pageDataCache = {};
+            window.pageDataCache[page.id] = page;
+
+            const statusColor = {
+                'DISCOVERED': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+                'PROCESSING': 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
+                'COMPLETED': 'bg-green-500/20 text-green-300 border-green-500/30',
+                'FAILED': 'bg-red-500/20 text-red-300 border-red-500/30'
+            }[page.status] || 'bg-slate-500/20 text-slate-300 border-slate-500/30';
+
+            // Parse keyword_data properly
+            let keywords = [];
+            try {
+                if (page.keyword_data) {
+                    keywords = typeof page.keyword_data === 'string'
+                        ? JSON.parse(page.keyword_data)
+                        : page.keyword_data;
+                }
+            } catch (e) {
+                console.error('Error parsing keywords:', e);
+            }
+
+            const keywordDisplay = keywords.length > 0
+                ? keywords.slice(0, 3).join(', ')
+                : '-';
+
+            row.innerHTML = `
+                <td class="px-6 py-4">
+                    <div class="truncate-url text-sm text-slate-300" title="${page.url}">${page.url}</div>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="px-2 py-1 text-xs font-medium rounded-full border ${statusColor}">
+                        ${page.status}
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="text-sm text-slate-400">${page.page_type || '-'}</span>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="text-sm text-slate-400">${keywordDisplay}</span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    ${page.page_type === 'product'
+                    ? `<div class="relative inline-block text-left">
+                            <select data-page-id="${page.id}" class="product-action-select px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg transition-colors cursor-pointer">
+                                <option value="">Product Actions...</option>
+                                <option value="generate_mofu">Generate MoFu</option>
+                                <option value="generate_tofu">Generate ToFu</option>
+                            </select>
+                           </div>`
+                    : page.page_type === 'Topic' && page.status === 'COMPLETED'
+                        ? `<button onclick="viewArticle('${page.id}')" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg transition-colors">View Article</button>`
+                        : page.status === 'COMPLETED'
+                            ? `<button onclick="viewStrategy('${page.id}')" class="px-3 py-1 bg-green-600 hover:bg-green-500 text-white text-xs font-medium rounded-lg transition-colors">View Strategy</button>`
+                            : `<button onclick='runAudit("${page.id}", this)' class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg transition-colors">Run Audit</button>`
+                }
+                </td>
+            `;
+
+            return row;
+        }
+
+        async function createNewProject() {
+            const domain = document.getElementById('newDomain').value.trim();
+            const client = document.getElementById('newClient').value.trim();
+            const btn = document.getElementById('createBtn');
+
+            if (!domain) return alert('Domain is required');
+
+            btn.disabled = true;
+            btn.textContent = 'Creating...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/create-project`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain, client })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    document.getElementById('newDomain').value = '';
+                    document.getElementById('newClient').value = '';
+                    await loadProjects();
+                    alert(`Project created! Found ${data.pages_found} pages.`);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (e) {
+                alert('Failed to create project: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Create & Crawl';
+            }
+        }
+
+        async function runAudit(pageId, btnElement) {
+            btnElement.disabled = true;
+            btnElement.innerHTML = '<svg class="animate-spin h-3 w-3 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/start-audit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ page_id: pageId })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.page) {
+                    // Update the specific row dynamically
+                    const oldRow = document.getElementById(`page-row-${pageId}`);
+                    if (oldRow) {
+                        const newRow = createPageRow(data.page);
+                        oldRow.replaceWith(newRow);
+                    }
+                    alert(`Audit completed! Found ${data.keyword_count} keywords.`);
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                    btnElement.disabled = false;
+                    btnElement.innerHTML = 'Run Audit';
+                }
+            } catch (e) {
+                console.error('Audit error:', e);
+                alert('Failed to run audit: ' + e.message);
+                btnElement.disabled = false;
+                btnElement.innerHTML = 'Run Audit';
+            }
+        }
+
+        // IMMEDIATE LOAD CHECK
+        console.log('Dashboard script loaded v2');
+        // alert('Dashboard script updated! If you see this, the file is new.');
+
+        // GLOBAL ERROR HANDLER
+        window.onerror = function (msg, url, line, col, error) {
+            console.error("Script Error:", msg, line);
+            // alert("Script Error: " + msg);
+            return false;
+        };
+
+        // DELEGATED EVENT LISTENER for dynamic elements
+        document.addEventListener('change', function (e) {
+            if (e.target && e.target.classList.contains('product-action-select')) {
+                handleProductAction(e.target.dataset.pageId, e.target);
+            }
+        });
+
+        async function handleProductAction(pageId, selectElement) {
+            const action = selectElement.value;
+            console.log('handleProductAction called:', { pageId, action });
+
+            if (!action) return;
+
+            // Force a redraw/alert to prove execution
+            // alert(`Action triggered: ${action} for page ${pageId}`);
+
+            const confirmed = confirm(`${action === 'generate_mofu' ? 'Generate MoFu topics' : 'Generate ToFu topics'} for this product?`);
+            if (!confirmed) {
+                selectElement.value = '';
+                return;
+            }
+
+            console.log('Sending API request...');
+            try {
+                const res = await fetch(`${API_BASE}/api/batch-update-pages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        page_ids: [pageId],
+                        action: action
+                    })
+                });
+
+                const data = await res.json();
+                console.log('API Response:', data);
+
+                if (res.ok) {
+                    alert(`Success! ${action === 'generate_mofu' ? 'MoFu' : 'ToFu'} topics generated. Refresh to see them in the table.`);
+                    if (currentProjectId) {
+                        const project = { id: currentProjectId };
+                        selectProject(project);
+                    }
+                } else {
+                    console.error('API Error:', data);
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            } catch (e) {
+                console.error('Product action error:', e);
+                alert('Failed to execute action: ' + e.message);
+            } finally {
+                selectElement.value = '';
+            }
+        }
+
+        function viewStrategy(pageId) {
+            // Get page data from cache
+            const page = window.pageDataCache ? window.pageDataCache[pageId] : null;
+
+            if (!page) {
+                alert('Page data not found. Please refresh and try again.');
+                return;
+            }
+
+            const modal = document.getElementById('strategyModal');
+            const content = document.getElementById('strategyContent');
+
+            // Parse the data
+            const auditData = page.audit_data || 'No analysis available';
+            let keywords = [];
+            let topics = [];
+
+            try {
+                keywords = page.keyword_data
+                    ? (typeof page.keyword_data === 'string' ? JSON.parse(page.keyword_data) : page.keyword_data)
+                    : [];
+            } catch (e) {
+                console.error('Error parsing keywords:', e);
+            }
+
+            try {
+                topics = page.strategy_ideas
+                    ? (typeof page.strategy_ideas === 'string' ? JSON.parse(page.strategy_ideas) : page.strategy_ideas)
+                    : [];
+            } catch (e) {
+                console.error('Error parsing topics:', e);
+            }
+
+            // Build the modal content
+            let html = `
+                <div class="mb-6 pb-6 border-b border-slate-700">
+                    <h4 class="text-sm font-semibold text-slate-400 uppercase mb-2">Page URL</h4>
+                    <p class="text-white break-all">${page.url}</p>
+                </div>
+                
+                <div class="mb-6">
+                    <h4 class="text-lg font-semibold text-white mb-3">All Ranking Keywords</h4>
+                    <div class="flex flex-wrap gap-2">
+                        ${keywords.length > 0
+                    ? keywords.map(kw => `<span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full text-sm">${kw}</span>`).join('')
+                    : '<span class="text-slate-500 text-sm">No keywords found</span>'
+                }
+                    </div>
+                </div>
+                
+                <div class="mb-6 prose prose-invert max-w-none">
+                    <h4 class="text-lg font-semibold text-white mb-3">SEO Analysis</h4>
+                    ${marked.parse(auditData)}
+                </div>
+            `;
+
+            if (topics.length > 0) {
+                html += `
+                    <div class="mt-8 border-t border-slate-700 pt-6">
+                        <h4 class="text-lg font-semibold text-white mb-4">Content Ideas - Click to Generate Article</h4>
+                        <div class="space-y-3">
+                `;
+
+                topics.forEach((topic, i) => {
+                    const topicTitle = topic.title || `Topic ${i + 1}`;
+                    const topicKeywords = topic.keywords || [];
+
+                    // Store in a global variable for easy access
+                    if (!window.topicData) window.topicData = {};
+                    const topicId = `topic-${Date.now()}-${i}`;
+                    window.topicData[topicId] = { title: topicTitle, keywords: topicKeywords };
+
+                    html += `
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 hover:border-indigo-500/50 transition-colors">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex-1">
+                                    <h5 class="font-medium text-white mb-2">${topicTitle}</h5>
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        ${topicKeywords.map(kw => `<span class="px-2 py-0.5 bg-slate-700 text-slate-300 rounded text-xs">${kw}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <button 
+                                    class="write-article-btn flex-shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+                                    data-topic-id="${topicId}"
+                                    onclick="triggerWrite('${topicId}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                    Write This
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = html;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function triggerWrite(topicId) {
+            const topicData = window.topicData[topicId];
+            if (topicData) {
+                // Find the button element
+                const btn = document.querySelector(`button[data-topic-id="${topicId}"]`);
+                writeArticle(topicData.title, topicData.keywords, btn);
+            } else {
+                console.error('Topic data not found for id:', topicId);
+            }
+        }
+
+        function closeStrategyModal() {
+            const modal = document.getElementById('strategyModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function writeArticle(topic, keywords, btnElement) {
+            const originalText = btnElement.innerHTML;
+            btnElement.disabled = true;
+            btnElement.innerHTML = '<svg class="animate-spin h-4 w-4 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Writing...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/write-article`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        topic,
+                        keywords: keywords || [],
+                        project_id: currentProjectId
+                    })
+                });
+
+                if (!res.ok) throw new Error('Failed to generate article');
+                const data = await res.json();
+
+                // Store page ID for publishing
+                currentArticlePageId = data.page_id;
+
+                // Show Article Modal
+                const modal = document.getElementById('articleModal');
+                const content = document.getElementById('articleContent');
+                content.innerHTML = marked.parse(data.content);
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+
+            } catch (error) {
+                alert('Error generating article: ' + error.message);
+            } finally {
+                btnElement.disabled = false;
+                btnElement.innerHTML = originalText;
+            }
+        }
+
+        function viewArticle(pageId) {
+            const page = window.pageDataCache ? window.pageDataCache[pageId] : null;
+            if (!page || !page.content) {
+                alert('Article content not found.');
+                return;
+            }
+
+            // Store for publishing
+            currentArticlePageId = pageId;
+
+            const modal = document.getElementById('articleModal');
+            const content = document.getElementById('articleContent');
+            content.innerHTML = marked.parse(page.content);
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeArticleModal() {
+            const modal = document.getElementById('articleModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function copyArticle() {
+            const content = document.getElementById('articleContent').innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('Article copied to clipboard!');
+            });
+        }
+
+        // Webflow Logic
+        let currentArticlePageId = null;
+
+        function openWebflowModal() {
+            if (!currentArticlePageId) return alert('No article generated/selected to publish');
+            document.getElementById('webflowModal').classList.remove('hidden');
+            document.getElementById('webflowModal').classList.add('flex');
+
+            const savedKey = localStorage.getItem('wf_api_key');
+            if (savedKey) document.getElementById('wfApiKey').value = savedKey;
+        }
+
+        function closeWebflowModal() {
+            document.getElementById('webflowModal').classList.add('hidden');
+            document.getElementById('webflowModal').classList.remove('flex');
+        }
+
+        async function loadWebflowSites() {
+            const apiKey = document.getElementById('wfApiKey').value.trim();
+            if (!apiKey) return alert('Please enter API Key');
+            localStorage.setItem('wf_api_key', apiKey);
+
+            try {
+                const res = await fetch(`${API_BASE}/api/webflow/sites`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ api_key: apiKey })
+                });
+                const data = await res.json();
+                if (data.sites) {
+                    const select = document.getElementById('wfSiteSelect');
+                    select.innerHTML = '<option value="">Select a site...</option>';
+                    data.sites.forEach(site => {
+                        select.innerHTML += `<option value="${site.id}">${site.displayName}</option>`;
+                    });
+                    document.getElementById('wfSiteSection').classList.remove('hidden');
+                } else {
+                    alert('No sites found or invalid key');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error loading sites');
+            }
+        }
+
+        async function loadWebflowCollections() {
+            const apiKey = document.getElementById('wfApiKey').value.trim();
+            const siteId = document.getElementById('wfSiteSelect').value;
+            if (!siteId) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/webflow/collections`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ api_key: apiKey, site_id: siteId })
+                });
+                const data = await res.json();
+                if (data.collections) {
+                    const select = document.getElementById('wfCollectionSelect');
+                    select.innerHTML = '<option value="">Select a collection...</option>';
+                    data.collections.forEach(col => {
+                        select.innerHTML += `<option value="${col.id}">${col.displayName}</option>`;
+                    });
+                    document.getElementById('wfCollectionSection').classList.remove('hidden');
+                    document.getElementById('wfMappingSection').classList.remove('hidden');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error loading collections');
+            }
+        }
+
+        async function publishToWebflow() {
+            const apiKey = document.getElementById('wfApiKey').value.trim();
+            const siteId = document.getElementById('wfSiteSelect').value;
+            const collectionId = document.getElementById('wfCollectionSelect').value;
+
+            if (!apiKey || !siteId || !collectionId) return alert('Please complete all selections');
+
+            const mapping = {
+                [document.getElementById('wfMapTitle').value]: 'title',
+                [document.getElementById('wfMapSlug').value]: 'slug',
+                [document.getElementById('wfMapContent').value]: 'content'
+            };
+
+            if (!currentArticlePageId) return alert('No article selected to publish');
+
+            const btn = document.getElementById('wfPublishBtn');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = 'Publishing...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/publish-webflow`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        page_id: currentArticlePageId,
+                        api_key: apiKey,
+                        site_id: siteId,
+                        collection_id: collectionId,
+                        field_mapping: mapping
+                    })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Published successfully!');
+                    closeWebflowModal();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Publish failed: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        }
+
+        // Initialize
+        loadProjects();
+    </script>
+</body>
+
+</html>
