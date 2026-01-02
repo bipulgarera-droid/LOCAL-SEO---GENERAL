@@ -25,6 +25,7 @@ nixPkgs = [
 ]
 
 [phases.install]
+cacheDirectories = ["/root/.cache/camoufox"]
 cmds = [
     "python -m venv /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt",
     "playwright install chromium",
